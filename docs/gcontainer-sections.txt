@@ -1,0 +1,83 @@
+<SECTION>
+<FILE>gchildable</FILE>
+<TITLE>GChildable</TITLE>
+<INCLUDE>gcontainer/gcontainer.h</INCLUDE>
+GChildable
+GChildableIface
+<SUBSECTION>
+g_childable_get_parent
+g_childable_set_parent
+g_childable_unparent
+<SUBSECTION>
+g_childable_class_init
+<SUBSECTION Standard>
+G_CHILDABLE
+G_CHILDABLE_GET_IFACE
+G_IS_CHILDABLE
+G_TYPE_CHILDABLE
+<SUBSECTION Private>
+g_childable_get_type
+</SECTION>
+
+<SECTION>
+<FILE>gchild</FILE>
+<TITLE>GChild</TITLE>
+<INCLUDE>gcontainer/gcontainer.h</INCLUDE>
+GChild
+<SUBSECTION>
+g_child_new
+<SUBSECTION Standard>
+GChildClass
+G_CHILD
+G_CHILD_CLASS
+G_CHILD_GET_CLASS
+G_IS_CHILD
+G_IS_CHILD_CLASS
+G_TYPE_CHILD
+<SUBSECTION Private>
+g_child_get_type
+</SECTION>
+
+<SECTION>
+<FILE>gcontainerable</FILE>
+<TITLE>GContainerable</TITLE>
+<INCLUDE>gcontainer/gcontainer.h</INCLUDE>
+GContainerable
+GContainerableIface
+<SUBSECTION>
+g_containerable_add
+g_containerable_remove
+g_containerable_get_children
+g_containerable_foreach
+g_containerable_propagate
+g_containerable_propagate_by_name
+g_containerable_propagate_valist
+<SUBSECTION>
+g_containerable_class_init
+<SUBSECTION Standard>
+G_CONTAINERABLE
+G_CONTAINERABLE_GET_IFACE
+G_IS_CONTAINERABLE
+G_TYPE_CONTAINERABLE
+<SUBSECTION Private>
+g_containerable_get_type
+</SECTION>
+
+<SECTION>
+<FILE>gcontainer</FILE>
+<TITLE>GContainer</TITLE>
+<INCLUDE>gcontainer/gcontainer.h</INCLUDE>
+GContainer
+<SUBSECTION>
+g_container_new
+<SUBSECTION Standard>
+GContainerClass
+G_CONTAINER
+G_CONTAINER_CLASS
+G_CONTAINER_GET_CLASS
+G_IS_CONTAINER
+G_IS_CONTAINER_CLASS
+G_TYPE_CONTAINER
+<SUBSECTION Private>
+g_container_get_type
+</SECTION>

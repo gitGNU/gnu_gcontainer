@@ -1,0 +1,22 @@
+Developing applications using gobject-based libraries, I noticed too
+often I need container for my own types. While the UI problems are
+partially solved by GtkContainer, I ever messed a more generic way to
+do the same thing for no UI objects.
+
+libgcontainer is a little library that provides the following types:
+
+o GChildable, an interface for object that can be child of another object
+o GChild, a base class implementing GChildable
+o GContainerable, an interface for object that can have children
+o GContainer, a base class implementing GChildable and GContainerable
+
+I wrote GContainer and GChild primarly as interfaces because the gobject
+library does not provide a way to derive an object from more than one
+parent. Interfaces, instead, can be applied to any objects, also on
+different hierarchy branches. This allow to apply the container methods
+only when they are needed.
+For instance, GtkContainer is a container but has no base container
+class in his ancestor types. Moreover, all the GtkContainer parents
+do not need to be containers.
+Providing the container as interface solves the problem:
+GtkContainer could implement GContainerable and ... that's all.

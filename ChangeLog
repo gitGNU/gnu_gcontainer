@@ -1,0 +1,21 @@
+2006-06-05  Fontana Nicola  <nicola@sviluppo>
+
+	* test/gcontainer-demo.c: cleaned up the source.
+
+	* gcontainer/gcontainerable.c: emits the "remove" signal for every
+	children in g_containerable_dispose() instead of manually remove the
+	GChildables from the list.
+
+	* gcontainer/gcontainerable.[ch]: added g_containerable_propagate()
+	and variants to propagate signals to the children of a GContainerable.
+	Declared the GChildableIface::propagate_valist() virtual method.
+
+	* === Released 1.0.0 ===
+
+
+2006-06-04  Nicola Fontana  <ntd@users.sourceforge.net>
+
+	* gcontainer/gchildable.c: corrected a bug on reference counting in
+	g_childable_dispose().
+
+	* test/gcontainer-demo.c: improved test program and checked all works.

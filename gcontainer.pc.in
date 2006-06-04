@@ -1,0 +1,14 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+libdir=@libdir@
+datadir=@datadir@/gcontainer
+includedir=@includedir@
+
+Name: @PACKAGE@
+Description: @PACKAGE_DESCRIPTION@
+Version: @VERSION@
+Requires: glib-2.0 >= 2.10.0, gobject-2.0 >= 2.10.0
+
+Libs: -L${libdir} -lgcontainer
+Cflags: -I${includedir}
