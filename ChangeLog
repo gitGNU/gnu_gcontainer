@@ -1,5 +1,17 @@
 2006-06-23  Fontana Nicola  <ntd@users.sourceforge.net>
 
+	* gcontainer/Makefile.am: added gbin.h to libgcontainer_include_DATA
+	to let this header be installed (I need holiday).
+
+	* gcontainer/docs: added a sourceforge link to the project main page.
+	
+	* configure.ac: bump version.
+
+	* === Released 1.99.1 ===
+
+
+2006-06-23  Fontana Nicola  <ntd@users.sourceforge.net>
+
 	* gcontainer/gcontainerable.c: added the private macros
 	G_CONTAINERABLE_SET_DISPOSING() and G_CONTAINERABLE_IS_DISPOSING() to
 	avoid recalls to g_containerable_dispose() in circular dependencies.

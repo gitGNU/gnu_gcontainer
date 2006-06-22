@@ -1,3 +1,5 @@
 * I18n.
 * Provide tutorials in the documentation.
+* Add GSlot as positional container, that is the children can be inserted in a
+  known position.
 * Testing!

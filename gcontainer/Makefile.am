@@ -4,7 +4,8 @@ AM_CFLAGS  =			@GOBJECT_CFLAGS@ -I$(top_srcdir)
 AM_LDFLAGS =			@GOBJECT_LIBS@
 
 libgcontainer_includedir =	$(includedir)/gcontainer
-libgcontainer_include_DATA =	gchild.h \
+libgcontainer_include_DATA =	gbin.h \
+				gchild.h \
 				gchildable.h \
 				gcontainer.h \
 				gcontainerable.h

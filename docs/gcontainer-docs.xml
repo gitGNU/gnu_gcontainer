@@ -6,6 +6,7 @@
 <book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
   <bookinfo>
     <title>GContainer Reference Manual</title>
+    <subtitle>Project hosted on <ulink url="http://sourceforge.net/projects/gcontainer"><inlinegraphic fileref="http://sflogo.sourceforge.net/sflogo.php?group_id=169307&amp;type=1" format="PNG" width="88" height="31"/></ulink></subtitle>
     <releaseinfo>for GContainer &version;</releaseinfo>
   </bookinfo>
 

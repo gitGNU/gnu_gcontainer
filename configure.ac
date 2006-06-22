@@ -2,7 +2,7 @@
 # require autoconf 2.59
 AC_PREREQ(2.59)
 
-AC_INIT([gcontainer],[1.99.0],[ntd@users.sourceforge.net],[gcontainer])
+AC_INIT([gcontainer],[1.99.1],[ntd@users.sourceforge.net],[gcontainer])
 AM_INIT_AUTOMAKE
 PACKAGE_DESCRIPTION="A glib-object based container manager"
 AC_SUBST([PACKAGE_DESCRIPTION])

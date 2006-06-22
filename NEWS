@@ -1,3 +1,9 @@
+Version 1.99.1
+==============
+
+Corrected a bug in the library installation (gbin.h were not installed).
+
+
 Version 1.99.0
 ==============
 
@@ -5,7 +11,7 @@ This is a more serious attempt to provide a generic container to the GObject
 world.
 
 After the first release, I realized that libgcontainer was not so generic as
-expected. The implementation was quite ugly, using a lot of dirty tricks to
+expected. The implementation was quite hugly, using a lot of dirty tricks to
 make its job.
 
 Overall, it was by far too early to public a stable package.
