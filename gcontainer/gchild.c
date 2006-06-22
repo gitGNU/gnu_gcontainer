@@ -22,8 +22,8 @@
  * SECTION:gchild
  * @short_description: Base implementation of the #GChildable interface
  *
- * This is the simplest implementation of the #GChildable interface.
- * Can be used as base class for #GChildable objects.
+ * This is the natural implementation of the #GChildable interface.
+ * Can be used as base class for objects that implements #GChildable.
  **/
 
 /**
@@ -35,50 +35,112 @@
 
 #include "gchild.h"
 
-#define	PARENT_TYPE	G_TYPE_INITIALLY_UNOWNED
 
-
-static void	g_child_childable_init		(GChildableIface *iface);
-
-
-GType
-g_child_get_type (void)
+enum
 {
-  static GType child_type = 0;
-  
-  if G_UNLIKELY (child_type == 0)
-    {
-      static const GTypeInfo child_info =
-	{
-	  sizeof (GChildClass),
-	  NULL,			/* base_init */
-	  NULL,			/* base_finalize */
-	  g_childable_class_init,
-	  NULL,			/* class_finalize */
-	  NULL,			/* class_data */
-	  sizeof (GChild),
-	  0,			/* n_preallocs */
-	  NULL,
-	};
-      static const GInterfaceInfo childable_info =
-	{
-	  (GInterfaceInitFunc)	g_child_childable_init,
-	  NULL,
-	};
-      child_type = g_type_register_static (PARENT_TYPE, "GChild",
-					   &child_info, 0);
-      g_type_add_interface_static (child_type, G_TYPE_CHILDABLE,
-				   &childable_info);
-    }
-  
-  return child_type;
-}
+  PROP_0,
+  PROP_PARENT
+};
+
+
+static void	        g_child_childable_init	(GChildableIface *iface);
+static void             g_child_get_property    (GObject         *object,
+                                                 guint            prop_id,
+                                                 GValue          *value,
+                                                 GParamSpec      *pspec);
+static void             g_child_set_property    (GObject         *object,
+                                                 guint            prop_id,
+                                                 const GValue    *value,
+                                                 GParamSpec      *pspec);
+
+static GContainerable * g_child_get_parent      (GChildable      *childable);
+static void             g_child_set_parent      (GChildable      *childable,
+                                                 GContainerable  *new_parent);
+
+
+G_DEFINE_TYPE_EXTENDED (GChild, g_child, 
+                        G_TYPE_INITIALLY_UNOWNED, 0, 
+                        G_IMPLEMENT_INTERFACE (G_TYPE_CHILDABLE, 
+                                               g_child_childable_init));
+
 
 static void
 g_child_childable_init (GChildableIface *iface)
 {
-  iface->parent_offset = G_STRUCT_OFFSET (GChild, parent);
-  iface->object_parent_class = g_type_class_peek (PARENT_TYPE);
+  iface->get_parent = g_child_get_parent;
+  iface->set_parent = g_child_set_parent;
+}
+
+static void
+g_child_class_init (GChildClass *klass)
+{
+  GObjectClass *gobject_class;
+
+  gobject_class = (GObjectClass *) klass;
+
+  gobject_class->get_property = g_child_get_property;
+  gobject_class->set_property = g_child_set_property;
+  gobject_class->dispose = g_childable_dispose;
+
+  g_object_class_override_property (gobject_class, PROP_PARENT, "parent");
+}
+
+static void
+g_child_init (GChild *child)
+{
+  child->parent = NULL;
+}
+
+static void
+g_child_get_property (GObject    *object,
+                      guint       prop_id,
+                      GValue     *value,
+                      GParamSpec *pspec)
+{
+  GChildable *childable = G_CHILDABLE (object);
+
+  switch (prop_id)
+    {
+    case PROP_PARENT:
+      g_value_set_object (value, g_childable_get_parent (childable));
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+static void
+g_child_set_property (GObject      *object,
+                      guint         prop_id,
+                      const GValue *value,
+                      GParamSpec   *pspec)
+{
+  GChildable *childable = G_CHILDABLE (object);
+
+  switch (prop_id)
+    {
+    case PROP_PARENT:
+      g_childable_set_parent (childable,
+			      (GContainerable *) g_value_get_object (value));
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+static GContainerable *
+g_child_get_parent (GChildable *childable)
+{
+  return ((GChild *) childable)->parent;
+}
+
+static void
+g_child_set_parent (GChildable     *childable,
+                    GContainerable *new_parent)
+{
+  ((GChild *) childable)->parent = new_parent;
 }
 
 
@@ -94,4 +156,3 @@ g_child_new (void)
 {
   return g_object_new (G_TYPE_CHILD, NULL);
 }
-

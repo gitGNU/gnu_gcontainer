@@ -5,10 +5,13 @@ do the same thing for no UI objects.
 
 libgcontainer is a little library that provides the following types:
 
-o GChildable, an interface for object that can be child of another object
-o GChild, a base class implementing GChildable
-o GContainerable, an interface for object that can have children
-o GContainer, a base class implementing GChildable and GContainerable
+o GChildable, an interface for object that can be child of another object;
+o GChild, a base class implementing GChildable;
+o GContainerable, an interface for object that can have children;
+o GContainer, a base class implementing GChildable and GContainerable managing
+  children trought a GSList (similar to GtkContainer);
+o GBin, a base class implementing GChildable and GContainerable which can
+  have only one child (similar to GtkBin).
 
 I wrote GContainer and GChild primarly as interfaces because the gobject
 library does not provide a way to derive an object from more than one

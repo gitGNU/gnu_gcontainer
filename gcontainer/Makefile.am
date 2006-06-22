@@ -11,7 +11,9 @@ libgcontainer_include_DATA =	gchild.h \
 
 lib_LTLIBRARIES = 		libgcontainer.la
 libgcontainer_la_LDFLAGS =	-release @PACKAGE_VERSION@
-libgcontainer_la_SOURCES =	gchild.c \
+libgcontainer_la_SOURCES =	gbin.c \
+				gbin.h \
+				gchild.c \
 				gchild.h \
 				gchildable.c \
 				gchildable.h \
@@ -19,4 +21,5 @@ libgcontainer_la_SOURCES =	gchild.c \
 				gcontainer.h \
 				gcontainerable.c \
 				gcontainerable.h \
-				gcontainerintl.h
+				gcontainerintl.h \
+				gobjectmissings.h

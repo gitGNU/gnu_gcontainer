@@ -1,3 +1,32 @@
+Version 1.99.0
+==============
+
+This is a more serious attempt to provide a generic container to the GObject
+world.
+
+After the first release, I realized that libgcontainer was not so generic as
+expected. The implementation was quite ugly, using a lot of dirty tricks to
+make its job.
+
+Overall, it was by far too early to public a stable package.
+
+Well, errare humanum est, so:
+
+THIS IS THE FIRST DEVELOPMENT RELEASE LEADING UP TO GContainer-2.0.
+
+The API is changed but now the overall design of GContainerable and GChildable
+looks more professional.
+
+The most important changes are:
+
+o GContainerable now is a REAL generic container;
+o The interfaces design is by far better than the 1.0.0 version;
+o Added a new container (GBin) to own one child;
+o GContainerable and GChildable interfaces now manage mutual recursion
+  inclusions their dispose default implementations, using a complex but quite
+  elegant solution.
+
+
 Version 1.0.0
 =============
 

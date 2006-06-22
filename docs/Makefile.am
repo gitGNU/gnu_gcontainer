@@ -12,7 +12,9 @@ MKTMPL_OPTIONS=
 FIXXREF_OPTIONS=
 HFILE_GLOB=$(top_srcdir)/gcontainer/*.h
 CFILE_GLOB=$(top_srcdir)/gcontainer/*.c
-IGNORE_HFILES=
+IGNORE_HFILES=		\
+       gcontainerintl.h \
+       gobjectmissings.h
 HTML_IMAGES=
 content_files=
 expand_content_files=

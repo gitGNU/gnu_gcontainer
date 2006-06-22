@@ -20,10 +20,11 @@
 
 /**
  * SECTION:gcontainer
- * @short_description: A sample implementation of the #GContainer interface
+ * @short_description: A generic object container
  *
- * This is the most simple implementation of the #GContainerable interface.
- * Can be used stand-alone or as base class for container objects.
+ * An implementation of #GContainerable to manage a generic list of #GObject
+ * that implements #GChildable. The children are internally managed trought
+ * a #GSList.
  **/
 
 /**
@@ -35,63 +36,125 @@
 
 #include "gcontainer.h"
 
-#define	PARENT_TYPE	G_TYPE_CHILD
 
-
-static void	g_container_containerable_init	(GContainerableIface *iface);
-
-
-GType
-g_container_get_type (void)
+enum
 {
-  static GType container_type = 0;
-  
-  if G_UNLIKELY (container_type == 0)
-    {
-      static const GTypeInfo container_info =
-	{
-	  sizeof (GContainerClass),
-	  NULL,			/* base_init */
-	  NULL,			/* base_finalize */
-	  g_containerable_class_init,
-	  NULL,			/* class_finalize */
-	  NULL,			/* class_data */
-	  sizeof (GContainer),
-	  0,			/* n_preallocs */
-	  NULL,
-	};
-      static const GInterfaceInfo containerable_info =
-	{
-	  (GInterfaceInitFunc)	g_container_containerable_init,
-	  NULL,
-	};
-      container_type = g_type_register_static (PARENT_TYPE, "GContainer",
-					       &container_info, 0);
-      g_type_add_interface_static (container_type, G_TYPE_CONTAINERABLE,
-				   &containerable_info);
-    }
-  
-  return container_type;
-}
+  PROP_0,
+  PROP_CHILD
+};
+
+
+static void	g_container_containerable_init
+                                        (GContainerableIface *iface);
+static void     g_container_set_property(GObject             *object,
+                                         guint                prop_id,
+                                         const GValue        *value,
+                                         GParamSpec          *pspec);
+
+static GSList * g_container_get_children(GContainerable      *containerable);
+static gboolean g_container_add         (GContainerable      *containerable,
+                                         GChildable          *childable);
+static gboolean g_container_remove      (GContainerable      *containerable,
+                                         GChildable          *childable);
+
+
+G_DEFINE_TYPE_EXTENDED (GContainer, g_container, 
+                        G_TYPE_CHILD, 0, 
+                        G_IMPLEMENT_INTERFACE (G_TYPE_CONTAINERABLE, 
+                                               g_container_containerable_init));
+
 
 static void
 g_container_containerable_init (GContainerableIface *iface)
 {
-  iface->children_offset = G_STRUCT_OFFSET (GContainer, children);
-  iface->object_parent_class = g_type_class_peek (PARENT_TYPE);
+  iface->get_children = g_container_get_children;
+  iface->add = g_container_add;
+  iface->remove = g_container_remove;
+}
+
+static void
+g_container_class_init (GContainerClass *klass)
+{
+  GObjectClass *gobject_class;
+
+  gobject_class = (GObjectClass *) klass;
+
+  gobject_class->set_property = g_container_set_property;
+  gobject_class->dispose = g_containerable_dispose;
+
+  g_object_class_override_property (gobject_class, PROP_CHILD, "child");
+}
+
+static void
+g_container_init (GContainer *container)
+{
+  container->children = NULL;
+}
+
+static void
+g_container_set_property (GObject      *object,
+                          guint         prop_id,
+                          const GValue *value,
+                          GParamSpec   *pspec)
+{
+  GContainerable *containerable = G_CONTAINERABLE (object);
+
+  switch (prop_id)
+    {
+    case PROP_CHILD:
+      g_containerable_add (containerable, g_value_get_object (value));
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+
+static GSList *
+g_container_get_children (GContainerable *containerable)
+{
+  GContainer *container = G_CONTAINER (containerable);
+
+  return g_slist_copy (container->children);
+}
+
+static gboolean
+g_container_add (GContainerable *containerable,
+                 GChildable     *childable)
+{
+  GContainer *container = G_CONTAINER (containerable);
+
+  container->children = g_slist_append (container->children, childable);
+  return TRUE;
+}
+
+static gboolean
+g_container_remove (GContainerable *containerable,
+                    GChildable     *childable)
+{
+  GContainer *container;
+  GSList     *node;
+
+  container = G_CONTAINER (containerable);
+  node = g_slist_find (container->children, childable);
+
+  if (! node)
+    return FALSE;
+
+  container->children = g_slist_delete_link (container->children, node);
+  return TRUE;
 }
 
 
 /**
  * g_container_new:
  *
- * Creates an empty container with a floating reference.
+ * Creates a new generic container.
  *
- * Return value: a new #GContainer instance
+ * Return value: a #GContainer instance
  **/
 GObject *
 g_container_new (void)
 {
   return g_object_new (G_TYPE_CONTAINER, NULL);
 }
-

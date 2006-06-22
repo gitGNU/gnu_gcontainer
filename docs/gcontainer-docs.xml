@@ -9,8 +9,37 @@
     <releaseinfo>for GContainer &version;</releaseinfo>
   </bookinfo>
 
-  <xi:include href="xml/gchildable.xml"/>
-  <xi:include href="xml/gchild.xml"/>
-  <xi:include href="xml/gcontainerable.xml"/>
-  <xi:include href="xml/gcontainer.xml"/>
+  <part id="Introduction">
+          <title>Introduction</title>
+  </part>
+
+  <part id="Interfaces">
+          <title>Base interfaces</title>
+
+          <xi:include href="xml/gchildable.xml"/>
+          <xi:include href="xml/gcontainerable.xml"/>
+  </part>
+
+  <part id="Implementations">
+          <title>Sample implementations</title>
+
+          <xi:include href="xml/gchild.xml"/>
+          <xi:include href="xml/gcontainer.xml"/>
+          <xi:include href="xml/gbin.xml"/>
+  </part>
+
+  <part id="References">
+          <title>References</title>
+
+          <refentry id="Hierarchy">
+                  <refmeta>
+                          <refentrytitle>Hierarchy</refentrytitle>
+                  </refmeta>
+                  <xi:include href="xml/tree_index.sgml"/>
+          </refentry>
+
+          <index>
+                  <title>Index</title>
+          </index>
+  </part>
 </book>

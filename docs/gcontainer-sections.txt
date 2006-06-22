@@ -7,9 +7,10 @@ GChildableIface
 <SUBSECTION>
 g_childable_get_parent
 g_childable_set_parent
+g_childable_reparent
 g_childable_unparent
 <SUBSECTION>
-g_childable_class_init
+g_childable_dispose
 <SUBSECTION Standard>
 G_CHILDABLE
 G_CHILDABLE_GET_IFACE
@@ -45,15 +46,16 @@ g_child_get_type
 GContainerable
 GContainerableIface
 <SUBSECTION>
+g_containerable_get_children
 g_containerable_add
 g_containerable_remove
-g_containerable_get_children
+<SUBSECTION>
 g_containerable_foreach
 g_containerable_propagate
 g_containerable_propagate_by_name
 g_containerable_propagate_valist
 <SUBSECTION>
-g_containerable_class_init
+g_containerable_dispose
 <SUBSECTION Standard>
 G_CONTAINERABLE
 G_CONTAINERABLE_GET_IFACE
@@ -80,4 +82,23 @@ G_IS_CONTAINER_CLASS
 G_TYPE_CONTAINER
 <SUBSECTION Private>
 g_container_get_type
+</SECTION>
+
+<SECTION>
+<FILE>gbin</FILE>
+<TITLE>GBin</TITLE>
+<INCLUDE>gcontainer/gcontainer.h</INCLUDE>
+GBin
+<SUBSECTION>
+g_bin_new
+<SUBSECTION Standard>
+GBinClass
+G_BIN
+G_BIN_CLASS
+G_BIN_GET_CLASS
+G_IS_BIN
+G_IS_BIN_CLASS
+G_TYPE_BIN
+<SUBSECTION Private>
+g_bin_get_type
 </SECTION>

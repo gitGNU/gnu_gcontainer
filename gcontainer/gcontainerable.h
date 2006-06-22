@@ -39,43 +39,24 @@ struct _GContainerableIface
   GTypeInterface base_iface;
 
 
-  /* Signals */
-
-  void		(*add)				(GContainerable	*containerable,
-      						 GObject	*childable);
-  void		(*remove)			(GContainerable *containerable,
-      						 GObject	*childable);
-
-  
   /* Virtual Table */
 
-  void		(*foreach)			(GContainerable	*container,
-						 GCallback	 callback,
-						 gpointer	 user_data);
-  void          (*propagate_valist)             (GContainerable *containerable,
-                                                 guint           signal_id,
-                                                 GQuark          detail,
-                                                 va_list         var_args);
-
-
-  /* Data to be set by the interface initialization function */
-  
-  gint		children_offset;
-  gpointer	object_parent_class;
+  GSList *      (*get_children)                 (GContainerable *containerable);
+  gboolean      (*add)				(GContainerable	*containerable,
+      						 GChildable	*childable);
+  gboolean      (*remove)			(GContainerable *containerable,
+      						 GChildable	*childable);
 };
 
 
 GType		g_containerable_get_type	(void) G_GNUC_CONST;
 
-void		g_containerable_class_init	(gpointer	 g_class,
-						 gpointer	 class_data);
 
-GList *		g_containerable_get_children	(GContainerable	*containerable);
-
+GSList *	g_containerable_get_children	(GContainerable	*containerable);
 void		g_containerable_add		(GContainerable	*containerable,
-						 GObject	*childable);
+						 GChildable	*childable);
 void		g_containerable_remove		(GContainerable	*containerable,
-						 GObject	*childable);
+						 GChildable	*childable);
 
 void		g_containerable_foreach		(GContainerable	*containerable,
 						 GCallback	 callback,
@@ -92,6 +73,8 @@ void            g_containerable_propagate_valist(GContainerable *containerable,
                                                  guint           signal_id,
                                                  GQuark          detail,
                                                  va_list         var_args);
+
+void            g_containerable_dispose       	(GObject	*object);
 
 G_END_DECLS
 

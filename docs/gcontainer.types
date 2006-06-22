@@ -3,5 +3,6 @@
 g_child_get_type
 g_childable_get_type
 g_container_get_type
+g_bin_get_type
 g_containerable_get_type
 

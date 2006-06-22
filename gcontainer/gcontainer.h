@@ -23,6 +23,12 @@
 
 #include <gcontainer/gchild.h>
 
+/* This is not only the include file for GContainer declarations, but also the
+ * main one. gchild.h yet includes both the interfaces (gchildable.h and
+ * gcontainerable.h), so I must include the other containers. */
+
+#include <gcontainer/gbin.h>
+
 
 G_BEGIN_DECLS
 
@@ -43,7 +49,7 @@ struct _GContainer
 
   /*< private >*/
 
-  GList			*children;
+  GSList		*children;
 };
 
 struct _GContainerClass

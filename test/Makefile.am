@@ -4,4 +4,11 @@ AM_CFLAGS  =		@GOBJECT_CFLAGS@ -I$(top_srcdir)
 AM_LDFLAGS =		@GOBJECT_LIBS@	-L$(top_builddir)/gcontainer -lgcontainer
 
 exampledir =		$(pkgdatadir)/examples
-example_PROGRAMS =	gcontainer-demo
+example_PROGRAMS =	demo misuse
+
+demo_SOURCES =		demo.c \
+			demo.h \
+			debug.c
+misuse_SOURCES =	misuse.c \
+			demo.h \
+			debug.c

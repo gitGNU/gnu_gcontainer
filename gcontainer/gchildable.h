@@ -44,33 +44,29 @@ struct _GChildableIface
   GTypeInterface base_iface;
 
 
+  /* Virtual Table */
+
+  GContainerable *      (*get_parent)           (GChildable     *childable);
+  void                  (*set_parent)           (GChildable     *childable,
+                                                 GContainerable *new_parent);
+
   /* Signals */
 
-  void		(*set_parent)			(GChildable	*childable,
-						 GContainerable	*new_parent);
-  void		(*parent_set)			(GChildable	*childable,
-						 GContainerable	*old_parent);
-  
-
-  /* Data to be set by the interface initialization function */
-  
-  gint		parent_offset;
-  gpointer	object_parent_class;
+  void                  (*parent_set)           (GChildable     *childable,
+                                                 GContainerable *old_parent);
 };
 
 
 GType		g_childable_get_type		(void) G_GNUC_CONST;
 
-void		g_childable_class_init		(gpointer	 g_class,
-						 gpointer	 class_data);
-
 GContainerable *g_childable_get_parent		(GChildable	*childable);
 void		g_childable_set_parent		(GChildable	*childable,
-						 GContainerable	*parent);
+						 GContainerable	*new_parent);
 void		g_childable_unparent		(GChildable	*childable);
+void            g_childable_reparent            (GChildable     *childable,
+                                                 GContainerable *new_parent);
 
-void		g_childable_class_init		(gpointer	 g_class,
-						 gpointer	 class_data);
+void	        g_childable_dispose		(GObject	*object);
 
 G_END_DECLS
 

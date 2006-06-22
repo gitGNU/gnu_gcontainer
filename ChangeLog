@@ -1,4 +1,87 @@
-2006-06-05  Fontana Nicola  <nicola@sviluppo>
+2006-06-23  Fontana Nicola  <ntd@users.sourceforge.net>
+
+	* gcontainer/gcontainerable.c: added the private macros
+	G_CONTAINERABLE_SET_DISPOSING() and G_CONTAINERABLE_IS_DISPOSING() to
+	avoid recalls to g_containerable_dispose() in circular dependencies.
+
+	* gchildable/gchildable.c: added the private macros
+	G_CHILDABLE_SET_DISPOSING() and G_CHILDABLE_IS_DISPOSING() to avoid
+	recalls to g_childable_dispose() in circular dependencies.
+
+	* test/: moved the debugging stuff to debug.c, created demo.h to be
+	included by all the demo programs, modified gcontainer-demo.c
+	accordling and renamed to demo.c. Added some tests to check GBin and
+	the circular dependencies between containers.
+
+	* test/misuse.c: a program to show which operations are not admitted.
+
+	* configure.ac: bump version.
+
+	* NEWS: updated.
+
+	* === Released 1.99.0 ===
+
+
+2006-06-21  Fontana Nicola  <ntd@users.sourceforge.net>
+
+	* gcontainer/gbin.*: added a new implementation of GContainerable to
+	show another simple use of container (this implementation is quite
+	similar to GtkBin).
+
+	* gcontainer/docs: added GBin stuff and modified a bit the whole
+	documentation arrangement.
+
+	* README: added GBin citation.
+
+
+2006-06-20  Fontana Nicola  <ntd@users.sourceforge.net>
+
+	* gcontainer/gchildable.*: rewrote the GChildable interface in a
+	cleaner way, as done for GContainerable.
+	Also here the API is changed. To implement GChildable to your own type
+	you must:
+	
+	o Add the "parent" property with g_object_class_override_property () in
+	  your class initialization, providing your set_property and
+	  get_property callbacks;
+	  
+	o Assign the g_childable_dispose() method to the `dispose' field of
+	  the GObjectClass structure in your class initialization or chain it
+	  to your own dispose method;
+
+	o Implement the `set_parent' and `get_parent' methods of the
+	  GChildableIface structure.
+
+	gcontainer/gchild.[ch] is the natural implementation of GChildable.
+
+
+2006-06-19  Fontana Nicola  <ntd@users.sourceforge.net>
+
+	* gcontainer/gcontainerable.*: rewrote the GContainerable interface in
+	a cleaner way. The "child" property now is managed throught
+	g_object_interface_install_property().
+	Furthermore, the GContainerable API is changed. Now, to implement
+	GContainerable in a type, you must:
+
+	o Add the "child" property with g_object_class_override_property () in
+	  your class initialization, providing your set_property callback:
+	  get_property is not requested because "child" is write-only;
+	  
+	o Assign the g_containerable_dispose() method to the `dispose' field of
+	  the GObjectClass structure in your class initialization or chain it
+	  to your own dispose method;
+
+	o Implement the `get_children', `add' and `remove' methods of the
+	  GContainerableIface structure.
+
+	gcontainer/gcontainer.[ch] and gcontainer/gbin.[ch] are two sample
+	implementations of GContainerable.
+
+	* gcontainer/gobjectmissings.h: moved the dangerous stuff here to
+	more easely mantain this library.
+
+
+2006-06-05  Fontana Nicola  <ntd@users.sourceforge.net>
 
 	* test/gcontainer-demo.c: cleaned up the source.
 
