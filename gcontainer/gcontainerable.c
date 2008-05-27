@@ -429,6 +429,7 @@ g_containerable_propagate_valist (GContainerable *containerable,
                                   va_list         var_args)
 {
   GSList *children;
+  va_list var_copy;
 
   g_return_if_fail (G_IS_CONTAINERABLE (containerable));
 
@@ -437,7 +438,10 @@ g_containerable_propagate_valist (GContainerable *containerable,
   while (children)
     {
       if (children->data)
-        g_signal_emit_valist (children->data, signal_id, detail, var_args);
+	{
+	  G_VA_COPY (var_copy, var_args);
+	  g_signal_emit_valist (children->data, signal_id, detail, var_copy);
+	}
 
       children = g_slist_delete_link (children, children);
     }
