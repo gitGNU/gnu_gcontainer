@@ -45,31 +45,29 @@ enum
 };
 
 
-static void	g_bin_containerable_init(GContainerableIface *iface);
-static void     g_bin_set_property      (GObject             *object,
-                                         guint                prop_id,
-                                         const GValue        *value,
-                                         GParamSpec          *pspec);
+static void	containerable_init	(GContainerableIface *iface);
+static void	set_property		(GObject	*object,
+					 guint		 prop_id,
+					 const GValue	*value,
+					 GParamSpec	*pspec);
+static GSList *	get_children		(GContainerable	*containerable);
+static gboolean	add			(GContainerable	*containerable,
+					 GChildable	*childable);
+static gboolean	remove			(GContainerable	*containerable,
+					 GChildable	*childable);
 
-static GSList * g_bin_get_children      (GContainerable      *containerable);
-static gboolean g_bin_add               (GContainerable      *containerable,
-                                         GChildable          *childable);
-static gboolean g_bin_remove            (GContainerable      *containerable,
-                                         GChildable          *childable);
 
-
-G_DEFINE_TYPE_EXTENDED (GBin, g_bin, 
-                        G_TYPE_CHILD, 0, 
+G_DEFINE_TYPE_EXTENDED (GBin, g_bin, G_TYPE_CHILD, 0, 
                         G_IMPLEMENT_INTERFACE (G_TYPE_CONTAINERABLE, 
-                                               g_bin_containerable_init));
+                                               containerable_init));
 
 
 static void
-g_bin_containerable_init (GContainerableIface *iface)
+containerable_init (GContainerableIface *iface)
 {
-  iface->get_children = g_bin_get_children;
-  iface->add = g_bin_add;
-  iface->remove = g_bin_remove;
+  iface->get_children = get_children;
+  iface->add = add;
+  iface->remove = remove;
 }
 
 static void
@@ -79,7 +77,7 @@ g_bin_class_init (GBinClass *klass)
 
   gobject_class = (GObjectClass *) klass;
 
-  gobject_class->set_property = g_bin_set_property;
+  gobject_class->set_property = set_property;
   gobject_class->dispose = g_containerable_dispose;
 
   g_object_class_override_property (gobject_class, PROP_CHILD, "child");
@@ -92,12 +90,12 @@ g_bin_init (GBin *bin)
 }
 
 static void
-g_bin_set_property (GObject      *object,
-                    guint         prop_id,
-                    const GValue *value,
-                    GParamSpec   *pspec)
+set_property (GObject      *object,
+	      guint         prop_id,
+	      const GValue *value,
+	      GParamSpec   *pspec)
 {
-  GContainerable *containerable = G_CONTAINERABLE (object);
+  GContainerable *containerable = (GContainerable *) object;
 
   switch (prop_id)
     {
@@ -111,9 +109,9 @@ g_bin_set_property (GObject      *object,
 
 
 static GSList *
-g_bin_get_children (GContainerable *containerable)
+get_children (GContainerable *containerable)
 {
-  GBin *bin = G_BIN (containerable);
+  GBin *bin = (GBin *) containerable;
 
   if (bin->content == NULL)
     return NULL;
@@ -122,10 +120,10 @@ g_bin_get_children (GContainerable *containerable)
 }
 
 static gboolean
-g_bin_add (GContainerable *containerable,
-           GChildable     *childable)
+add (GContainerable *containerable,
+     GChildable     *childable)
 {
-  GBin *bin = G_BIN (containerable);
+  GBin *bin = (GBin *) containerable;
 
   if (bin->content != NULL)
     {
@@ -143,13 +141,11 @@ g_bin_add (GContainerable *containerable,
 }
 
 static gboolean
-g_bin_remove (GContainerable *containerable,
-              GChildable     *childable)
+remove (GContainerable *containerable,
+	GChildable     *childable)
 {
-  GBin *bin = G_BIN (containerable);
+  GBin *bin = (GBin *) containerable;
   
-  g_return_val_if_fail (bin->content == childable, FALSE);
-
   bin->content = NULL;
   return TRUE;
 }

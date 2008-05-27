@@ -65,23 +65,22 @@ enum
 };
 
 
-static void	g_containerable_iface_init      	(GContainerableIface *iface);
-static void     g_containerable_real_add                (GContainerable *containerable,
-                                                         GChildable     *childable,
-                                                         gpointer        user_data);
-static void     g_containerable_real_remove             (GContainerable *containerable,
-                                                         GChildable     *childable,
-                                                         gpointer        user_data);
+static void	iface_base	(GContainerableIface *iface);
+static void	iface_init	(GContainerableIface *iface);
+static void    	real_add	(GContainerable	*containerable,
+				 GChildable	*childable,
+				 gpointer	 user_data);
+static void    	real_remove	(GContainerable	*containerable,
+				 GChildable	*childable,
+				 gpointer	 user_data);
+static GSList *	get_children	(GContainerable	*containerable);
+static gboolean	add		(GContainerable	*containerable,
+				 GChildable	*childable);
+static gboolean	remove		(GContainerable	*containerable,
+				 GChildable	*childable);
 
-static GSList * g_containerable_get_children_unimplemented
-                                                        (GContainerable *containerable);
-static gboolean g_containerable_add_unimplemented       (GContainerable	*containerable,
-                                                         GChildable	*childable);
-static gboolean g_containerable_remove_unimplemented    (GContainerable *containerable,
-                                                         GChildable	*childable);
 
-
-static GQuark   quark_disposing = 0;
+static GQuark 	quark_disposing = 0;
 static guint	signals[LAST_SIGNAL] = { 0 };
 
 
@@ -95,9 +94,9 @@ g_containerable_get_type (void)
       static const GTypeInfo containerable_info =
       {
 	sizeof (GContainerableIface),
-	NULL,                   /* base_init */
+	(GBaseInitFunc)		iface_base,
 	NULL,			/* base_finalize */
-	(GClassInitFunc)	g_containerable_iface_init,
+	(GClassInitFunc)	iface_init,
 	NULL,			/* iface_finalize */
       };
 
@@ -110,19 +109,19 @@ g_containerable_get_type (void)
   return containerable_type;
 }
 
-
 static void
-g_containerable_iface_init (GContainerableIface *iface)
+iface_base (GContainerableIface *iface)
 {
-  GParamSpec *param;
-  GClosure   *closure;
-  GType       param_types[1];
+  static gboolean initialized = FALSE;
+  GParamSpec     *param;
+  GClosure       *closure;
+  GType           param_types[1];
 
+  if (initialized)
+    return;
+
+  initialized = TRUE;
   quark_disposing = g_quark_from_static_string ("gchildable-disposing");
-
-  iface->get_children = g_containerable_get_children_unimplemented;
-  iface->add = g_containerable_add_unimplemented;
-  iface->remove = g_containerable_remove_unimplemented;
 
   param = g_param_spec_object ("child",
                                P_("Child"),
@@ -138,8 +137,7 @@ g_containerable_iface_init (GContainerableIface *iface)
    *
    * Adds @childable to the children list of @containerable.
    **/
-  closure = g_cclosure_new (G_CALLBACK (g_containerable_real_add),
-                            (gpointer)0xdeadbeaf, NULL);
+  closure = g_cclosure_new (G_CALLBACK (real_add), (gpointer)0xdeadbeaf, NULL);
   param_types[0] = G_TYPE_OBJECT;
   signals[ADD] = g_signal_newv ("add",
                                 G_TYPE_CONTAINERABLE,
@@ -156,8 +154,7 @@ g_containerable_iface_init (GContainerableIface *iface)
    *
    * Removes @childable from the children list of @containerable.
    **/
-  closure = g_cclosure_new (G_CALLBACK (g_containerable_real_remove),
-                            (gpointer)0xdeadbeaf, NULL);
+  closure = g_cclosure_new (G_CALLBACK (real_remove), (gpointer)0xdeadbeaf, NULL);
   param_types[0] = G_TYPE_OBJECT;
   signals[REMOVE] = g_signal_newv ("remove",
                                    G_TYPE_CONTAINERABLE,
@@ -168,11 +165,19 @@ g_containerable_iface_init (GContainerableIface *iface)
                                    G_TYPE_NONE, 1, param_types);
 }
 
+static void
+iface_init (GContainerableIface *iface)
+{
+  iface->get_children = get_children;
+  iface->add = add;
+  iface->remove = remove;
+}
+
 
 static void
-g_containerable_real_add (GContainerable *containerable,
-                          GChildable     *childable,
-                          gpointer        user_data)
+real_add (GContainerable *containerable,
+	  GChildable     *childable,
+	  gpointer        user_data)
 {
   GContainerableIface *containerable_iface;
   GContainerable      *old_parent;
@@ -205,9 +210,9 @@ g_containerable_real_add (GContainerable *containerable,
 }
 
 static void
-g_containerable_real_remove (GContainerable *containerable,
-                             GChildable     *childable,
-                             gpointer        user_data)
+real_remove (GContainerable *containerable,
+	     GChildable     *childable,
+	     gpointer        user_data)
 {
   GContainerableIface *containerable_iface;
 
@@ -227,7 +232,7 @@ g_containerable_real_remove (GContainerable *containerable,
 
 
 static GSList *
-g_containerable_get_children_unimplemented (GContainerable *containerable)
+get_children (GContainerable *containerable)
 {
   g_warning ("GContainerable::get_children not implemented for `%s'",
              g_type_name (G_TYPE_FROM_INSTANCE (containerable)));
@@ -235,7 +240,7 @@ g_containerable_get_children_unimplemented (GContainerable *containerable)
 }
 
 static gboolean
-g_containerable_add_unimplemented (GContainerable *containerable,
+add (GContainerable *containerable,
                                    GChildable     *childable)
 {
   g_warning ("GContainerable::add not implemented for `%s'",
@@ -244,8 +249,8 @@ g_containerable_add_unimplemented (GContainerable *containerable,
 }
 
 static gboolean
-g_containerable_remove_unimplemented (GContainerable *containerable,
-                                      GChildable     *childable)
+remove (GContainerable *containerable,
+	GChildable     *childable)
 {
   g_warning ("GContainerable::remove not implemented for `%s'",
              g_type_name (G_TYPE_FROM_INSTANCE (containerable)));
@@ -311,13 +316,11 @@ g_containerable_remove (GContainerable *containerable,
  * Gets the children list of @containerable.
  * This list must be manually freed when no longer user.
  *
- * Return value: a newly allocated #GSList or %NULL on error.
+ * Returns: a newly allocated #GSList or %NULL on error.
  **/
 GSList *
 g_containerable_get_children (GContainerable *containerable)
 {
-  GContainerableIface *iface;
-
   g_return_val_if_fail (G_IS_CONTAINERABLE (containerable), NULL);
 
   return G_CONTAINERABLE_GET_IFACE (containerable)->get_children (containerable);
@@ -397,8 +400,8 @@ g_containerable_propagate_by_name (GContainerable *containerable,
   GQuark  detail = 0;
   va_list var_args;
 
-  if (! g_signal_parse_name (detailed_signal, G_TYPE_FROM_INSTANCE (containerable),
-                             &signal_id, &detail, FALSE))
+  if (!g_signal_parse_name (detailed_signal, G_TYPE_FROM_INSTANCE (containerable),
+			    &signal_id, &detail, FALSE))
     {
       g_warning ("%s: signal `%s' is invalid for instance `%p'",
                  G_STRLOC, detailed_signal, containerable);
@@ -460,11 +463,11 @@ g_containerable_propagate_valist (GContainerable *containerable,
 void
 g_containerable_dispose (GObject *object)
 {
-  GContainerable      *containerable;
-  GSList              *children;
-  GChildable          *child;
-  GType                instance_type;
-  GObjectClass        *parent_class;
+  GContainerable *containerable;
+  GSList         *children;
+  GChildable     *child;
+  GType           instance_type;
+  GObjectClass   *parent_class;
  
   if (G_CONTAINERABLE_IS_DISPOSING (object))
     return;

@@ -35,10 +35,10 @@
  * G_TYPE_INSTANCE_FROM_INTERFACE:
  * @g_iface: location of a valid #GTypeInterface structure
  *
- * Returns the instance type which implements @g_iface.
- *
  * This information is obtained by accessing the @g_instance_type
  * private field of the #GTypeInterface structure.
+ *
+ * Returns: the instance type which implements @g_iface
  **/
 #define G_TYPE_INSTANCE_FROM_INTERFACE(g_iface) \
   (((GTypeInterface*) (g_iface))->g_instance_type)
@@ -48,11 +48,11 @@
  * @instance: location of the #GTypeInstance structure
  * @iface_type: the interface type
  *
- * Returns the type in the @instance hierarchy which implements @iface_type.
- * 
  * Useful in the interface implementations while writing default methods
  * which must chain-up the instance parent methods.
  * A good example is g_containerable_dispose() and g_childable_dispose().
+ *
+ * Returns: the type in the @instance hierarchy which implements @iface_type
  **/
 #define G_TYPE_INSTANCE_WHICH_IMPLEMENTS(instance,iface_type) \
   G_TYPE_INSTANCE_FROM_INTERFACE (G_TYPE_INSTANCE_GET_INTERFACE (object,iface_type,GTypeInterface))

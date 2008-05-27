@@ -45,13 +45,11 @@ struct _GChildableIface
 
 
   /* Virtual Table */
-
   GContainerable *      (*get_parent)           (GChildable     *childable);
   void                  (*set_parent)           (GChildable     *childable,
-                                                 GContainerable *new_parent);
+                                                 GContainerable *parent);
 
   /* Signals */
-
   void                  (*parent_set)           (GChildable     *childable,
                                                  GContainerable *old_parent);
 };
@@ -61,10 +59,10 @@ GType		g_childable_get_type		(void) G_GNUC_CONST;
 
 GContainerable *g_childable_get_parent		(GChildable	*childable);
 void		g_childable_set_parent		(GChildable	*childable,
-						 GContainerable	*new_parent);
+						 GContainerable	*parent);
 void		g_childable_unparent		(GChildable	*childable);
 void            g_childable_reparent            (GChildable     *childable,
-                                                 GContainerable *new_parent);
+                                                 GContainerable *parent);
 
 void	        g_childable_dispose		(GObject	*object);
 

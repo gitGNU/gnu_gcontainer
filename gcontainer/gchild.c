@@ -43,32 +43,29 @@ enum
 };
 
 
-static void	        g_child_childable_init	(GChildableIface *iface);
-static void             g_child_get_property    (GObject         *object,
-                                                 guint            prop_id,
-                                                 GValue          *value,
-                                                 GParamSpec      *pspec);
-static void             g_child_set_property    (GObject         *object,
-                                                 guint            prop_id,
-                                                 const GValue    *value,
-                                                 GParamSpec      *pspec);
+static void	        childable_init	(GChildableIface *iface);
+static void             get_property	(GObject	*object,
+					 guint		 prop_id,
+					 GValue		*value,
+					 GParamSpec	*pspec);
+static void             set_property	(GObject	*object,
+					 guint		 prop_id,
+					 const GValue	*value,
+					 GParamSpec	*pspec);
+static GContainerable *	get_parent      (GChildable	*childable);
+static void		set_parent      (GChildable	*childable,
+					 GContainerable	*parent);
 
-static GContainerable * g_child_get_parent      (GChildable      *childable);
-static void             g_child_set_parent      (GChildable      *childable,
-                                                 GContainerable  *new_parent);
 
-
-G_DEFINE_TYPE_EXTENDED (GChild, g_child, 
-                        G_TYPE_INITIALLY_UNOWNED, 0, 
-                        G_IMPLEMENT_INTERFACE (G_TYPE_CHILDABLE, 
-                                               g_child_childable_init));
+G_DEFINE_TYPE_EXTENDED (GChild, g_child, G_TYPE_INITIALLY_UNOWNED, 0, 
+                        G_IMPLEMENT_INTERFACE (G_TYPE_CHILDABLE, childable_init));
 
 
 static void
-g_child_childable_init (GChildableIface *iface)
+childable_init (GChildableIface *iface)
 {
-  iface->get_parent = g_child_get_parent;
-  iface->set_parent = g_child_set_parent;
+  iface->get_parent = get_parent;
+  iface->set_parent = set_parent;
 }
 
 static void
@@ -78,8 +75,8 @@ g_child_class_init (GChildClass *klass)
 
   gobject_class = (GObjectClass *) klass;
 
-  gobject_class->get_property = g_child_get_property;
-  gobject_class->set_property = g_child_set_property;
+  gobject_class->get_property = get_property;
+  gobject_class->set_property = set_property;
   gobject_class->dispose = g_childable_dispose;
 
   g_object_class_override_property (gobject_class, PROP_PARENT, "parent");
@@ -92,12 +89,12 @@ g_child_init (GChild *child)
 }
 
 static void
-g_child_get_property (GObject    *object,
-                      guint       prop_id,
-                      GValue     *value,
-                      GParamSpec *pspec)
+get_property (GObject    *object,
+	      guint       prop_id,
+	      GValue     *value,
+	      GParamSpec *pspec)
 {
-  GChildable *childable = G_CHILDABLE (object);
+  GChildable *childable = (GChildable *) object;
 
   switch (prop_id)
     {
@@ -111,12 +108,12 @@ g_child_get_property (GObject    *object,
 }
 
 static void
-g_child_set_property (GObject      *object,
-                      guint         prop_id,
-                      const GValue *value,
-                      GParamSpec   *pspec)
+set_property (GObject      *object,
+	      guint         prop_id,
+	      const GValue *value,
+	      GParamSpec   *pspec)
 {
-  GChildable *childable = G_CHILDABLE (object);
+  GChildable *childable = (GChildable *) object;
 
   switch (prop_id)
     {
@@ -131,16 +128,16 @@ g_child_set_property (GObject      *object,
 }
 
 static GContainerable *
-g_child_get_parent (GChildable *childable)
+get_parent (GChildable *childable)
 {
   return ((GChild *) childable)->parent;
 }
 
 static void
-g_child_set_parent (GChildable     *childable,
-                    GContainerable *new_parent)
+set_parent (GChildable     *childable,
+	    GContainerable *parent)
 {
-  ((GChild *) childable)->parent = new_parent;
+  ((GChild *) childable)->parent = parent;
 }
 
 

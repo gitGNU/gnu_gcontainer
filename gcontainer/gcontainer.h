@@ -21,16 +21,15 @@
 #ifndef __G_CONTAINER_H__
 #define __G_CONTAINER_H__
 
+/* This is not only the include file for the GContainer object, but also
+ * for the whole gcontainer library so I must include all the headers */
+
 #include <gcontainer/gchild.h>
-
-/* This is not only the include file for GContainer declarations, but also the
- * main one. gchild.h yet includes both the interfaces (gchildable.h and
- * gcontainerable.h), so I must include the other containers. */
-
 #include <gcontainer/gbin.h>
 
 
 G_BEGIN_DECLS
+
 
 #define G_TYPE_CONTAINER             (g_container_get_type ())
 #define G_CONTAINER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_CONTAINER, GContainer))
@@ -48,7 +47,6 @@ struct _GContainer
   GChild		 child;
 
   /*< private >*/
-
   GSList		*children;
 };
 
@@ -59,11 +57,10 @@ struct _GContainerClass
 
 
 GType			g_container_get_type	(void) G_GNUC_CONST;
-
 GObject *		g_container_new		(void);
+
 
 G_END_DECLS
 
 
 #endif /* __G_CONTAINER_H__ */
-

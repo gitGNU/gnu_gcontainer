@@ -44,32 +44,29 @@ enum
 };
 
 
-static void	g_container_containerable_init
-                                        (GContainerableIface *iface);
-static void     g_container_set_property(GObject             *object,
-                                         guint                prop_id,
-                                         const GValue        *value,
-                                         GParamSpec          *pspec);
-
-static GSList * g_container_get_children(GContainerable      *containerable);
-static gboolean g_container_add         (GContainerable      *containerable,
-                                         GChildable          *childable);
-static gboolean g_container_remove      (GContainerable      *containerable,
-                                         GChildable          *childable);
+static void	containerable_init	(GContainerableIface *iface);
+static void     set_property		(GObject	*object,
+                                         guint		 prop_id,
+                                         const GValue	*value,
+                                         GParamSpec	*pspec);
+static GSList * get_children		(GContainerable	*containerable);
+static gboolean add			(GContainerable	*containerable,
+                                         GChildable	*childable);
+static gboolean remove			(GContainerable	*containerable,
+                                         GChildable	*childable);
 
 
-G_DEFINE_TYPE_EXTENDED (GContainer, g_container, 
-                        G_TYPE_CHILD, 0, 
+G_DEFINE_TYPE_EXTENDED (GContainer, g_container, G_TYPE_CHILD, 0, 
                         G_IMPLEMENT_INTERFACE (G_TYPE_CONTAINERABLE, 
-                                               g_container_containerable_init));
+                                               containerable_init));
 
 
 static void
-g_container_containerable_init (GContainerableIface *iface)
+containerable_init (GContainerableIface *iface)
 {
-  iface->get_children = g_container_get_children;
-  iface->add = g_container_add;
-  iface->remove = g_container_remove;
+  iface->get_children = get_children;
+  iface->add = add;
+  iface->remove = remove;
 }
 
 static void
@@ -79,7 +76,7 @@ g_container_class_init (GContainerClass *klass)
 
   gobject_class = (GObjectClass *) klass;
 
-  gobject_class->set_property = g_container_set_property;
+  gobject_class->set_property = set_property;
   gobject_class->dispose = g_containerable_dispose;
 
   g_object_class_override_property (gobject_class, PROP_CHILD, "child");
@@ -92,12 +89,12 @@ g_container_init (GContainer *container)
 }
 
 static void
-g_container_set_property (GObject      *object,
-                          guint         prop_id,
-                          const GValue *value,
-                          GParamSpec   *pspec)
+set_property (GObject      *object,
+	      guint         prop_id,
+	      const GValue *value,
+	      GParamSpec   *pspec)
 {
-  GContainerable *containerable = G_CONTAINERABLE (object);
+  GContainerable *containerable = (GContainerable *) object;
 
   switch (prop_id)
     {
@@ -111,34 +108,34 @@ g_container_set_property (GObject      *object,
 
 
 static GSList *
-g_container_get_children (GContainerable *containerable)
+get_children (GContainerable *containerable)
 {
-  GContainer *container = G_CONTAINER (containerable);
+  GContainer *container = (GContainer *) containerable;
 
   return g_slist_copy (container->children);
 }
 
 static gboolean
-g_container_add (GContainerable *containerable,
-                 GChildable     *childable)
+add (GContainerable *containerable,
+     GChildable     *childable)
 {
-  GContainer *container = G_CONTAINER (containerable);
+  GContainer *container = (GContainer *) containerable;
 
   container->children = g_slist_append (container->children, childable);
   return TRUE;
 }
 
 static gboolean
-g_container_remove (GContainerable *containerable,
-                    GChildable     *childable)
+remove (GContainerable *containerable,
+	GChildable     *childable)
 {
   GContainer *container;
   GSList     *node;
 
-  container = G_CONTAINER (containerable);
+  container = (GContainer *) containerable;
   node = g_slist_find (container->children, childable);
 
-  if (! node)
+  if (!node)
     return FALSE;
 
   container->children = g_slist_delete_link (container->children, node);

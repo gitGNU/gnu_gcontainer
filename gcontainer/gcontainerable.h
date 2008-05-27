@@ -41,17 +41,15 @@ struct _GContainerableIface
 
   /* Virtual Table */
 
-  GSList *      (*get_children)                 (GContainerable *containerable);
-  gboolean      (*add)				(GContainerable	*containerable,
-      						 GChildable	*childable);
-  gboolean      (*remove)			(GContainerable *containerable,
-      						 GChildable	*childable);
+  GSList *	(*get_children)			(GContainerable *containerable);
+  gboolean	(*add)				(GContainerable	*containerable,
+						 GChildable	*childable);
+  gboolean	(*remove)			(GContainerable *containerable,
+						 GChildable	*childable);
 };
 
 
 GType		g_containerable_get_type	(void) G_GNUC_CONST;
-
-
 GSList *	g_containerable_get_children	(GContainerable	*containerable);
 void		g_containerable_add		(GContainerable	*containerable,
 						 GChildable	*childable);
@@ -61,20 +59,20 @@ void		g_containerable_remove		(GContainerable	*containerable,
 void		g_containerable_foreach		(GContainerable	*containerable,
 						 GCallback	 callback,
 						 gpointer	 user_data);
-void            g_containerable_propagate       (GContainerable *containerable,
-                                                 guint           signal_id,
-                                                 GQuark          detail,
-                                                 ...);
-void            g_containerable_propagate_by_name
-                                                (GContainerable *containerable,
-                                                 const gchar    *detailed_signal,
-                                                 ...);
-void            g_containerable_propagate_valist(GContainerable *containerable,
-                                                 guint           signal_id,
-                                                 GQuark          detail,
-                                                 va_list         var_args);
+void		g_containerable_propagate	(GContainerable *containerable,
+						 guint           signal_id,
+						 GQuark          detail,
+						 ...);
+void		g_containerable_propagate_by_name
+						(GContainerable *containerable,
+						 const gchar    *detailed_signal,
+						 ...);
+void		g_containerable_propagate_valist(GContainerable *containerable,
+						 guint           signal_id,
+						 GQuark          detail,
+						 va_list         var_args);
+void		g_containerable_dispose		(GObject	*object);
 
-void            g_containerable_dispose       	(GObject	*object);
 
 G_END_DECLS
 

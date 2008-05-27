@@ -66,16 +66,14 @@ enum
 };
 
 
-static void	        g_childable_iface_init		(GChildableIface*iface);
+static void		iface_base	(GChildableIface *iface);
+static void		iface_init	(GChildableIface *iface);
+static GContainerable *	get_parent	(GChildable	*childable);
+static void		set_parent	(GChildable	*childable,
+					 GContainerable	*parent);
 
-static GContainerable * g_childable_get_parent_unimplemented
-                                                        (GChildable     *childable);
-static void             g_childable_set_parent_unimplemented
-                                                        (GChildable     *childable,
-                                                         GContainerable *new_parent);
-
-static GQuark           quark_disposing = 0;
-static guint            signals[LAST_SIGNAL] = { 0 };
+static GQuark		quark_disposing = 0;
+static guint		signals[LAST_SIGNAL] = { 0 };
 
 
 GType
@@ -88,9 +86,9 @@ g_childable_get_type (void)
       static const GTypeInfo childable_info =
       {
 	sizeof (GChildableIface),
-	NULL,                   /* base_init */
+	(GBaseInitFunc)		iface_base,
 	NULL,			/* base_finalize */
-	(GClassInitFunc)	g_childable_iface_init,
+	(GClassInitFunc)	iface_init,
 	NULL,			/* iface_finalize */
       };
 
@@ -102,16 +100,17 @@ g_childable_get_type (void)
   return childable_type;
 }
 
-
 static void
-g_childable_iface_init (GChildableIface *iface)
+iface_base (GChildableIface *iface)
 {
-  GParamSpec *param;
+  static gboolean initialized = FALSE;
+  GParamSpec     *param;
 
+  if (initialized)
+    return;
+
+  initialized = TRUE;
   quark_disposing = g_quark_from_static_string ("gchildable-disposing");
-
-  iface->get_parent = g_childable_get_parent_unimplemented;
-  iface->set_parent = g_childable_set_parent_unimplemented;
 
   param = g_param_spec_object ("parent",
                                P_("Parent"),
@@ -137,9 +136,16 @@ g_childable_iface_init (GChildableIface *iface)
                                       G_TYPE_NONE, 1, G_TYPE_OBJECT);
 }
 
+static void
+iface_init (GChildableIface *iface)
+{
+  iface->get_parent = get_parent;
+  iface->set_parent = set_parent;
+}
+
 
 static GContainerable *
-g_childable_get_parent_unimplemented (GChildable *childable)
+get_parent (GChildable *childable)
 {
   g_warning ("GChildable::get_parent not implemented for `%s'",
              g_type_name (G_TYPE_FROM_INSTANCE (childable)));
@@ -147,8 +153,8 @@ g_childable_get_parent_unimplemented (GChildable *childable)
 }
 
 static void
-g_childable_set_parent_unimplemented (GChildable     *childable,
-                                      GContainerable *parent)
+set_parent (GChildable     *childable,
+	    GContainerable *parent)
 {
   g_warning ("GChildable::set_parent not implemented for `%s'",
              g_type_name (G_TYPE_FROM_INSTANCE (childable)));
@@ -161,7 +167,7 @@ g_childable_set_parent_unimplemented (GChildable     *childable,
  *
  * Gets the parent of @childable.
  *
- * Return value: the requested parent, or %NULL on errors
+ * Returns: the requested parent, or %NULL on errors
  **/
 GContainerable *
 g_childable_get_parent (GChildable *childable)
@@ -174,22 +180,22 @@ g_childable_get_parent (GChildable *childable)
 /**
  * g_childable_set_parent:
  * @childable: a #GChildable
- * @new_parent: a #GContainerable
+ * @parent: a #GContainerable
  *
- * Sets @new_parent as parent of @childable,
+ * Sets @parent as parent of @childable,
  * properly handling the references between them.
  *
  * If @childable has yet a parent, this function returns with a warning.
  **/
 void
 g_childable_set_parent (GChildable     *childable,
-			GContainerable *new_parent)
+			GContainerable *parent)
 {
   GChildableIface *childable_iface;
   GContainerable  *old_parent;
 
   g_return_if_fail (G_IS_CHILDABLE (childable));
-  g_return_if_fail (G_IS_CONTAINERABLE (new_parent));
+  g_return_if_fail (G_IS_CONTAINERABLE (parent));
 
   childable_iface = G_CHILDABLE_GET_IFACE (childable);
   old_parent = childable_iface->get_parent (childable);
@@ -201,7 +207,7 @@ g_childable_set_parent (GChildable     *childable,
     }
 
   g_object_ref_sink (childable);
-  childable_iface->set_parent (childable, new_parent);
+  childable_iface->set_parent (childable, parent);
   g_signal_emit (childable, signals[PARENT_SET], 0, old_parent);
 }
 
@@ -231,40 +237,39 @@ g_childable_unparent (GChildable *childable)
   childable_iface->set_parent (childable, NULL);
   g_signal_emit (childable, signals[PARENT_SET], 0, old_parent);
 
-  if (! G_CHILDABLE_IS_DISPOSING (childable))
+  if (!G_CHILDABLE_IS_DISPOSING (childable))
     g_object_unref (childable);
 }
 
 /**
  * g_childable_reparent:
  * @childable: a #GChildable
- * @new_parent: a #GObject that implements #GContainerable
+ * @parent: an object that implements #GContainerable
  *
- * Moves @childable from the old parent to @new_parent, handling reference
+ * Moves @childable from the old parent to @parent, handling reference
  * count issues to avoid destroying the object.
- * 
  **/
 void
 g_childable_reparent (GChildable     *childable,
-                      GContainerable *new_parent)
+                      GContainerable *parent)
 {
   GChildableIface *childable_iface;
   GContainerable  *old_parent;
 
   g_return_if_fail (G_IS_CHILDABLE (childable));
-  g_return_if_fail (G_IS_CONTAINERABLE (new_parent));
+  g_return_if_fail (G_IS_CONTAINERABLE (parent));
 
   childable_iface = G_CHILDABLE_GET_IFACE (childable);
   old_parent = childable_iface->get_parent (childable);
 
   g_return_if_fail (old_parent != NULL);
 
-  if (old_parent == new_parent)
+  if (old_parent == parent)
     return;
 
   g_object_ref (childable);
   g_containerable_remove (old_parent, childable);
-  g_containerable_add (new_parent, childable);
+  g_containerable_add (parent, childable);
   g_object_unref (childable);
 }
 
