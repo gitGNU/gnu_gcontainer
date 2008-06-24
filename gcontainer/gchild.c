@@ -34,6 +34,7 @@
  **/
 
 #include "gchild.h"
+#include "gchildprivate.h"
 
 
 enum
@@ -75,6 +76,8 @@ g_child_class_init (GChildClass *klass)
 
   gobject_class = (GObjectClass *) klass;
 
+  g_type_class_add_private (klass, sizeof (GChildPrivate));
+
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
   gobject_class->dispose = g_childable_dispose;
@@ -85,7 +88,9 @@ g_child_class_init (GChildClass *klass)
 static void
 g_child_init (GChild *child)
 {
-  child->parent = NULL;
+  child->priv = G_TYPE_INSTANCE_GET_PRIVATE (child, G_TYPE_CHILD,
+					     GChildPrivate);
+  child->priv->parent = NULL;
 }
 
 static void
@@ -130,14 +135,14 @@ set_property (GObject      *object,
 static GContainerable *
 get_parent (GChildable *childable)
 {
-  return ((GChild *) childable)->parent;
+  return ((GChild *) childable)->priv->parent;
 }
 
 static void
 set_parent (GChildable     *childable,
 	    GContainerable *parent)
 {
-  ((GChild *) childable)->parent = parent;
+  ((GChild *) childable)->priv->parent = parent;
 }
 
 

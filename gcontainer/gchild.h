@@ -33,16 +33,16 @@ G_BEGIN_DECLS
 #define G_IS_CHILD_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), G_TYPE_CHILD))
 #define G_CHILD_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), G_TYPE_CHILD, GChildClass))
 
-typedef struct _GChild       GChild;
-typedef struct _GChildClass  GChildClass;
+typedef struct _GChild        GChild;
+typedef struct _GChildClass   GChildClass;
+typedef struct _GChildPrivate GChildPrivate;
 
 struct _GChild
 {
   GInitiallyUnowned	 initially_unowned;
 
   /*< private >*/
-
-  GContainerable	*parent;
+  GChildPrivate		*priv;
 };
 
 struct _GChildClass
