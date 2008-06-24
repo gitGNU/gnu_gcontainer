@@ -36,6 +36,7 @@
  **/
 
 #include "gbin.h"
+#include "gbinprivate.h"
 
 
 enum
@@ -77,6 +78,8 @@ g_bin_class_init (GBinClass *klass)
 
   gobject_class = (GObjectClass *) klass;
 
+  g_type_class_add_private (klass, sizeof (GBinPrivate));
+
   gobject_class->set_property = set_property;
   gobject_class->dispose = g_containerable_dispose;
 
@@ -86,7 +89,8 @@ g_bin_class_init (GBinClass *klass)
 static void
 g_bin_init (GBin *bin)
 {
-  bin->content = NULL;
+  bin->priv = G_TYPE_INSTANCE_GET_PRIVATE (bin, G_TYPE_BIN, GBinPrivate);
+  bin->priv->content = NULL;
 }
 
 static void
@@ -113,10 +117,10 @@ get_children (GContainerable *containerable)
 {
   GBin *bin = (GBin *) containerable;
 
-  if (bin->content == NULL)
+  if (bin->priv->content == NULL)
     return NULL;
 
-  return g_slist_append (NULL, bin->content);
+  return g_slist_append (NULL, bin->priv->content);
 }
 
 static gboolean
@@ -125,18 +129,18 @@ add (GContainerable *containerable,
 {
   GBin *bin = (GBin *) containerable;
 
-  if (bin->content != NULL)
+  if (bin->priv->content != NULL)
     {
       g_warning ("Attempting to add an object with type %s to a %s, "
                  "but as a GBin can only contain one object at a time; "
                  "it already contains a widget of type %s",
                  g_type_name (G_OBJECT_TYPE (childable)),
                  g_type_name (G_OBJECT_TYPE (bin)),
-                 g_type_name (G_OBJECT_TYPE (bin->content)));
+                 g_type_name (G_OBJECT_TYPE (bin->priv->content)));
       return FALSE;
     }
 
-  bin->content = childable;
+  bin->priv->content = childable;
   return TRUE;
 }
 
@@ -146,7 +150,7 @@ remove (GContainerable *containerable,
 {
   GBin *bin = (GBin *) containerable;
   
-  bin->content = NULL;
+  bin->priv->content = NULL;
   return TRUE;
 }
 

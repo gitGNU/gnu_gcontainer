@@ -14,6 +14,7 @@ lib_LTLIBRARIES = 		libgcontainer.la
 libgcontainer_la_LDFLAGS =	-release @PACKAGE_VERSION@
 libgcontainer_la_SOURCES =	gbin.c \
 				gbin.h \
+				gbinprivate.h \
 				gchild.c \
 				gchild.h \
 				gchildable.c \

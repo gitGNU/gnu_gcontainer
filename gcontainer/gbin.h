@@ -34,16 +34,16 @@ G_BEGIN_DECLS
 #define G_BIN_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), G_TYPE_BIN, GBinClass))
 
 
-typedef struct _GBin       GBin;
-typedef struct _GBinClass  GBinClass;
+typedef struct _GBin        GBin;
+typedef struct _GBinClass   GBinClass;
+typedef struct _GBinPrivate GBinPrivate;
 
 struct _GBin
 {
   GChild		 child;
 
   /*< private >*/
-
-  GChildable            *content;
+  GBinPrivate		*priv;
 };
 
 struct _GBinClass
