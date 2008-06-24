@@ -39,15 +39,16 @@ G_BEGIN_DECLS
 #define G_CONTAINER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), G_TYPE_CONTAINER, GContainerClass))
 
 
-typedef struct _GContainer	 GContainer;
-typedef struct _GContainerClass  GContainerClass;
+typedef struct _GContainer	  GContainer;
+typedef struct _GContainerClass   GContainerClass;
+typedef struct _GContainerPrivate GContainerPrivate;
 
 struct _GContainer
 {
   GChild		 child;
 
   /*< private >*/
-  GSList		*children;
+  GContainerPrivate	*priv;
 };
 
 struct _GContainerClass

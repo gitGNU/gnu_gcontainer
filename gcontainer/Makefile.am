@@ -20,6 +20,7 @@ libgcontainer_la_SOURCES =	gbin.c \
 				gchildable.h \
 				gcontainer.c \
 				gcontainer.h \
+				gcontainerprivate.h \
 				gcontainerable.c \
 				gcontainerable.h \
 				gcontainerintl.h \

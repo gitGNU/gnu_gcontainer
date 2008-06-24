@@ -35,6 +35,7 @@
  **/
 
 #include "gcontainer.h"
+#include "gcontainerprivate.h"
 
 
 enum
@@ -76,6 +77,8 @@ g_container_class_init (GContainerClass *klass)
 
   gobject_class = (GObjectClass *) klass;
 
+  g_type_class_add_private (klass, sizeof (GContainerPrivate));
+
   gobject_class->set_property = set_property;
   gobject_class->dispose = g_containerable_dispose;
 
@@ -85,7 +88,9 @@ g_container_class_init (GContainerClass *klass)
 static void
 g_container_init (GContainer *container)
 {
-  container->children = NULL;
+  container->priv = G_TYPE_INSTANCE_GET_PRIVATE (container, G_TYPE_CONTAINER, 
+						 GContainerPrivate);
+  container->priv->children = NULL;
 }
 
 static void
@@ -112,7 +117,7 @@ get_children (GContainerable *containerable)
 {
   GContainer *container = (GContainer *) containerable;
 
-  return g_slist_copy (container->children);
+  return g_slist_copy (container->priv->children);
 }
 
 static gboolean
@@ -121,7 +126,8 @@ add (GContainerable *containerable,
 {
   GContainer *container = (GContainer *) containerable;
 
-  container->children = g_slist_append (container->children, childable);
+  container->priv->children = g_slist_append (container->priv->children,
+					      childable);
   return TRUE;
 }
 
@@ -133,12 +139,13 @@ remove (GContainerable *containerable,
   GSList     *node;
 
   container = (GContainer *) containerable;
-  node = g_slist_find (container->children, childable);
+  node = g_slist_find (container->priv->children, childable);
 
   if (!node)
     return FALSE;
 
-  container->children = g_slist_delete_link (container->children, node);
+  container->priv->children = g_slist_delete_link (container->priv->children,
+						   node);
   return TRUE;
 }
 
